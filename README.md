@@ -1,4 +1,3 @@
-[README.md](https://github.com/user-attachments/files/30479992/README.md)
 # Origin Story
 
 A daily habit, training and drawing tracker for Chloe, built like a comic page.
@@ -11,14 +10,28 @@ Five tabs — **Cover**, **Panels**, **Train**, **Fuel**, **Studio**.
 
 ## Putting it online
 
+The server only needs **three files**: `index.html`, `manifest.webmanifest`
+and `sw.js`. The icons are inlined as data URIs inside those, so there are no
+PNGs to upload. `README.md`, `check.js` and `test.js` are for you, not the site.
+
 1. Create a new **public** repo, e.g. `origin-story`.
-2. Upload all six files to the root — no subfolder.
+2. Upload the three files to the root — no subfolder.
 3. Settings → Pages → Source: *Deploy from a branch*, branch `main`, folder `/ (root)`.
 4. Wait a minute, then open `https://welshy369.github.io/origin-story/` on her phone.
-5. Share → *Add to Home Screen*. It opens full screen with no browser chrome.
+5. **Android/Chrome:** an Install button appears on the Cover tab — tap it.
+   **iPhone/Safari:** the Cover tab shows the Share → *Add to Home Screen* steps.
 
-It must be served over `https://`. Opening `index.html` straight off the phone
-with a `file://` path blocks both saving and installing — same trap as last time.
+### Why it can't just be a downloaded file
+
+A page opened from the phone's own storage runs on a `file://` path. Browsers
+treat that as an untrusted origin: `localStorage` is blocked or wiped, service
+workers refuse to register, and there is no *Add to Home Screen* option at all.
+That's the same wall the Kitchen Table Plan hit. It has to be served from an
+`https://` URL — GitHub Pages is just the cheapest way to get one.
+
+Once it's installed, though, it genuinely is on the phone: the service worker
+caches the whole app, so it opens and works with no signal at all. The only
+thing that ever needs the network is the first load and the web fonts.
 
 **Every deploy: bump `CACHE` in `sw.js`** (`origin-story-v1` → `-v2` → …).
 Miss it and phones keep serving the old copy out of cache indefinitely.
