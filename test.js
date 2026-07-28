@@ -29,6 +29,7 @@ const dom = new JSDOM(html, {
     w.HTMLCanvasElement.prototype.toDataURL = () => "data:image/jpeg;base64,AAAA";
     w.HTMLElement.prototype.setPointerCapture = () => {};
     w.scrollTo = () => {};
+    if (!w.matchMedia) w.matchMedia = () => ({ matches: false, addListener(){}, removeListener(){} });
   }
 });
 const w = dom.window, doc = w.document;
@@ -164,6 +165,20 @@ ok("gallery picks it up", doc.querySelectorAll(".gallery figure").length === 1);
 ok("art is stored separately", !!store["originStory.art.v1"] && !store["originStory.v1"].includes("data:image"));
 tap(doc.querySelector('[data-act="panel-del"]'));
 ok("panel deletes", doc.querySelectorAll(".gallery figure").length === 0);
+
+// --- install ----------------------------------------------------------
+tap(doc.querySelector('[data-tab="cover"]'));
+ok("no install nag without a prompt event", $("#installPanel").style.display === "none");
+const bip = new w.Event("beforeinstallprompt");
+let prompted = false;
+bip.prompt = () => { prompted = true; };
+bip.userChoice = Promise.resolve({ outcome: "accepted" });
+w.dispatchEvent(bip);
+ok("install panel appears when the browser offers it", $("#installPanel").style.display === "block");
+tap($('[data-act="install"]'));
+ok("the button actually fires the prompt", prompted);
+await new Promise(r => setTimeout(r, 10));
+ok("panel goes away once it's done", $("#installPanel").style.display === "none");
 
 // --- storage hygiene --------------------------------------------------
 const saved = JSON.parse(store["originStory.v1"]);

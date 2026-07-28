@@ -10,8 +10,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Origin Story">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icon-192.png">
-<link rel="icon" href="icon-192.png">
+<!-- icons are inlined so the whole app is three files, not five -->
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<link rel="icon" href="data:image/png;base64,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">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Bangers&family=Archivo:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
@@ -353,6 +354,13 @@ canvas{width:100%;height:auto;display:block;touch-action:none;cursor:crosshair}
         <b>On the fuel tab</b>
         It's there so you can see you're eating <em>enough</em>, not so you can eat less. If counting food ever starts to feel stressful, or you catch yourself trying to get the number down, close the tab and tell your mum or dad. That's not you failing at the app — it's the app being the wrong tool that week.
       </div>
+    </div>
+
+    <div class="panel" id="installPanel" style="display:none">
+      <span class="caption">Put it on your phone</span>
+      <h2 id="installHead">Add it to the home screen</h2>
+      <p class="dek" id="installDek">It opens full screen with no browser bar, and works with no signal.</p>
+      <button class="btn mg wide" id="installBtn" data-act="install">Install Origin Story</button>
     </div>
 
     <div class="panel">
@@ -1040,6 +1048,37 @@ function savePanel(){
   render();
 }
 
+/* ---------- install to home screen ----------
+   Android/Chrome fires beforeinstallprompt and we can show a real button.
+   iOS never fires it, so we show the Share-sheet steps instead. Once the app
+   is running standalone there is nothing left to offer, so the panel hides. */
+var deferredPrompt=null;
+function isStandalone(){
+  var mm = window.matchMedia && window.matchMedia("(display-mode: standalone)");
+  return (mm && mm.matches) || window.navigator.standalone===true;
+}
+function isIOS(){
+  return /iphone|ipad|ipod/i.test(navigator.userAgent) ||
+         (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1);
+}
+function renderInstall(){
+  if(isStandalone()){ ui.installPanel.style.display="none"; return; }
+  if(deferredPrompt){
+    ui.installPanel.style.display="block";
+    ui.installHead.textContent="Add it to the home screen";
+    ui.installDek.textContent="It opens full screen with no browser bar, and works with no signal.";
+    ui.installBtn.style.display="block";
+    ui.installBtn.textContent="Install Origin Story";
+  } else if(isIOS()){
+    ui.installPanel.style.display="block";
+    ui.installHead.textContent="Add it to the home screen";
+    ui.installDek.textContent="Tap the Share button at the bottom of Safari, scroll down, and choose Add to Home Screen. It'll open full screen with no browser bar.";
+    ui.installBtn.style.display="none";
+  } else {
+    ui.installPanel.style.display="none";
+  }
+}
+
 /* ---------- toast ---------- */
 var toastT=null;
 function toast(m){
@@ -1159,6 +1198,16 @@ function act(name,el){
       saveArt(); render();
       break;
 
+    case "install":
+      if(!deferredPrompt) break;
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(function(c){
+        deferredPrompt=null;
+        renderInstall();
+        if(c && c.outcome==="accepted") toast("Installed. Look for it on the home screen.");
+      });
+      break;
+
     case "backup":
       var txt=JSON.stringify(S.data);
       if(navigator.clipboard&&navigator.clipboard.writeText){
@@ -1194,7 +1243,7 @@ function boot(){
    "sessNote","sessList","stretchList","fuelDay","logHead","fKcal","fPro","fAvg","fBar",
    "fState","fSub","foodLog","foodSearch","foodResults","pickedWrap","pickedName","unitChips",
    "portionChips","amt","pickedKcal","customWrap","cName","cKcal","cPro","pad","penRow",
-   "gallery","galDek","toast","storeWarn"].forEach(function(id){ ui[id]=document.getElementById(id); });
+   "gallery","galDek","toast","storeWarn","installPanel","installHead","installDek","installBtn"].forEach(function(id){ ui[id]=document.getElementById(id); });
   ui.tabs=[].slice.call(document.querySelectorAll(".tab"));
   ui.views=[].slice.call(document.querySelectorAll(".view"));
 
@@ -1216,8 +1265,16 @@ function boot(){
   });
   ui.amt.addEventListener("input",calcPicked);
 
+  window.addEventListener("beforeinstallprompt",function(e){
+    e.preventDefault(); deferredPrompt=e; renderInstall();
+  });
+  window.addEventListener("appinstalled",function(){
+    deferredPrompt=null; renderInstall(); toast("Installed.");
+  });
+
   wirePad(); repaint(); renderPens();
   render();
+  renderInstall();
 
   if("serviceWorker" in navigator){
     window.addEventListener("load",function(){

@@ -2,8 +2,8 @@
    Network-first so a deploy is picked up on the next online load,
    cache fallback so the app still opens with no signal.
    BUMP THE CACHE NAME ON EVERY DEPLOY or phones keep the old copy. */
-var CACHE = "origin-story-v1";
-var SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
+var CACHE = "origin-story-v2";
+var SHELL = ["./", "./index.html", "./manifest.webmanifest"];
 
 self.addEventListener("install", function (e) {
   self.skipWaiting();
