@@ -1,0 +1,17 @@
+{
+  "name": "Origin Story",
+  "short_name": "Origin",
+  "description": "Six small things a day, an eight-week training plan, and a panel to draw.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E8DCC0",
+  "theme_color": "#1B2A6B",
+  "lang": "en-GB",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

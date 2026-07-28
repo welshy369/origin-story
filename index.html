@@ -1,0 +1,1235 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Origin Story</title>
+<meta name="theme-color" content="#1B2A6B">
+<meta name="description" content="A daily habit, training and drawing tracker built like a comic page.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Origin Story">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Bangers&family=Archivo:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+<style>
+:root{
+  --pulp:#E8DCC0;      /* newsprint */
+  --pulp-2:#DFD1AF;    /* newsprint, shaded */
+  --ink:#141414;       /* registration black */
+  --navy:#1B2A6B;      /* four-colour navy */
+  --cyan:#00A8E1;
+  --magenta:#E5007D;
+  --yellow:#FFD500;
+  --rule:3px;
+  --gut:14px;
+  --tabh:66px;
+  --safe-b:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--pulp);
+  color:var(--ink);
+  font-family:'Archivo',system-ui,sans-serif;
+  font-size:16px;line-height:1.5;
+  padding-bottom:calc(var(--tabh) + var(--safe-b) + 18px);
+  overflow-x:hidden;
+}
+/* halftone tint over the whole page — real four-colour print artefact */
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:radial-gradient(var(--ink) 0.7px, transparent 0.8px);
+  background-size:5px 5px;opacity:.07;
+}
+.wrap{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:0 var(--gut)}
+
+/* ---------- masthead ---------- */
+.masthead{
+  background:var(--navy);color:var(--pulp);
+  border-bottom:var(--rule) solid var(--ink);
+  padding:14px 0 12px;margin-bottom:18px;position:relative;overflow:hidden;
+}
+.masthead::after{
+  content:"";position:absolute;inset:0;
+  background-image:radial-gradient(#fff 1px, transparent 1.2px);
+  background-size:7px 7px;opacity:.13;pointer-events:none;
+}
+.mast-in{position:relative;z-index:1;display:flex;align-items:center;gap:12px;
+  max-width:640px;margin:0 auto;padding:0 var(--gut)}
+.logo{
+  font-family:'Anton',sans-serif;font-size:30px;line-height:.92;letter-spacing:.5px;
+  text-transform:uppercase;color:var(--pulp);
+  text-shadow:2px 2px 0 var(--magenta), 4px 4px 0 var(--cyan);
+}
+.logo span{display:block;font-size:11px;font-family:'Space Mono',monospace;
+  letter-spacing:2.4px;text-shadow:none;color:var(--yellow);margin-top:5px}
+.issue-stamp{
+  margin-left:auto;text-align:center;background:var(--yellow);color:var(--ink);
+  border:var(--rule) solid var(--ink);padding:5px 9px;
+  font-family:'Space Mono',monospace;font-weight:700;line-height:1.1;
+  transform:rotate(3deg);box-shadow:3px 3px 0 var(--ink);flex:none;
+}
+.issue-stamp b{display:block;font-family:'Anton',sans-serif;font-size:21px;font-weight:400}
+.issue-stamp i{display:block;font-style:normal;font-size:9px;letter-spacing:1.4px}
+
+/* ---------- panels ---------- */
+.panel{
+  background:#F6EEDC;border:var(--rule) solid var(--ink);
+  box-shadow:5px 5px 0 var(--ink);
+  padding:16px 15px 18px;margin:0 0 22px;position:relative;
+}
+.panel.tilt-l{transform:rotate(-.35deg)}
+.panel.tilt-r{transform:rotate(.35deg)}
+.caption{
+  display:inline-block;background:var(--yellow);border:var(--rule) solid var(--ink);
+  font-family:'Space Mono',monospace;font-size:10.5px;font-weight:700;
+  letter-spacing:1.6px;text-transform:uppercase;padding:3px 8px;
+  margin:-26px 0 12px -8px;box-shadow:2px 2px 0 var(--ink);
+}
+h2{font-family:'Anton',sans-serif;font-weight:400;font-size:26px;line-height:1.05;
+  margin:0 0 10px;text-transform:uppercase;letter-spacing:.3px}
+h3{font-family:'Anton',sans-serif;font-weight:400;font-size:18px;line-height:1.15;
+  margin:20px 0 8px;text-transform:uppercase;letter-spacing:.4px}
+h3:first-child{margin-top:0}
+p{margin:0 0 11px}
+p:last-child{margin-bottom:0}
+strong{font-weight:700}
+.dek{font-size:14.5px;color:#4A4438;margin-bottom:14px}
+.hr{height:0;border:0;border-top:var(--rule) solid var(--ink);margin:18px 0}
+
+/* ---------- today's panel (the signature) ---------- */
+.today{
+  border:var(--rule) solid var(--ink);background:#F6EEDC;
+  box-shadow:6px 6px 0 var(--ink);
+  aspect-ratio:5/3;position:relative;overflow:hidden;margin-bottom:6px;
+  display:flex;align-items:center;justify-content:center;
+}
+.today .sky{position:absolute;inset:0;background:var(--pulp-2);
+  transition:background .5s ease}
+.today .dots{position:absolute;inset:0;opacity:0;transition:opacity .5s ease;
+  background-image:radial-gradient(var(--cyan) 1.6px,transparent 1.8px);
+  background-size:9px 9px}
+.today .rays{position:absolute;inset:-30%;opacity:0;transition:opacity .6s ease;
+  background:repeating-conic-gradient(from 0deg at 50% 55%,
+    rgba(255,213,0,.85) 0deg 7deg, transparent 7deg 15deg)}
+.today .wash{position:absolute;inset:0;opacity:0;transition:opacity .5s ease;
+  background:linear-gradient(180deg,rgba(0,168,225,.55),rgba(229,0,125,.35))}
+.today .art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  image-rendering:auto;display:none}
+.today.has-art .art{display:block}
+.today .count{
+  position:relative;z-index:3;font-family:'Anton',sans-serif;font-size:64px;
+  color:var(--ink);opacity:.16;letter-spacing:-2px}
+.today.has-art .count{display:none}
+.today .burst{
+  position:absolute;z-index:4;right:-6px;top:-6px;
+  font-family:'Bangers',cursive;font-size:26px;color:var(--ink);
+  background:var(--yellow);border:var(--rule) solid var(--ink);
+  padding:7px 16px 5px;transform:rotate(9deg) scale(0);
+  letter-spacing:1.5px;box-shadow:3px 3px 0 var(--ink);
+  transition:transform .35s cubic-bezier(.2,1.6,.4,1)}
+.today.done .burst{transform:rotate(9deg) scale(1)}
+.today.s1 .dots{opacity:.5}
+.today.s2 .dots{opacity:.85}
+.today.s3 .wash{opacity:.6}
+.today.s3 .dots{opacity:.9}
+.today.done .rays{opacity:.5}
+.today.done .wash{opacity:.75}
+.panel-cap{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.6px;
+  background:var(--pulp-2);border:var(--rule) solid var(--ink);border-top:0;
+  padding:7px 10px;margin-bottom:22px;box-shadow:6px 6px 0 var(--ink)}
+
+/* ---------- meters ---------- */
+.meters{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px}
+.meter{border:var(--rule) solid var(--ink);background:var(--pulp-2);padding:9px 8px 10px;text-align:center}
+.meter .n{font-family:'Anton',sans-serif;font-size:23px;line-height:1}
+.meter .l{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1.2px;
+  text-transform:uppercase;margin-top:4px;color:#4A4438}
+.bar{height:11px;border:2px solid var(--ink);background:#F6EEDC;margin-top:7px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--cyan);width:0;transition:width .45s ease}
+.bar.m i{background:var(--magenta)}
+.bar.y i{background:var(--yellow)}
+
+/* ---------- ticks / habits ---------- */
+.tick{
+  display:flex;align-items:center;gap:12px;width:100%;text-align:left;
+  background:#F6EEDC;border:var(--rule) solid var(--ink);
+  padding:12px 13px;margin-bottom:10px;font:inherit;color:inherit;cursor:pointer;
+  box-shadow:3px 3px 0 var(--ink);transition:transform .12s ease,box-shadow .12s ease;
+}
+.tick:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
+.tick .box{
+  flex:none;width:26px;height:26px;border:var(--rule) solid var(--ink);
+  background:var(--pulp-2);display:grid;place-items:center;
+  font-family:'Bangers',cursive;font-size:19px;line-height:1;color:transparent}
+.tick.on .box{background:var(--magenta);color:#fff}
+.tick .t{flex:1;min-width:0}
+.tick .t b{display:block;font-weight:700;font-size:15px}
+.tick .t span{display:block;font-size:12.5px;color:#4A4438;margin-top:1px}
+.tick.on .t b{text-decoration:line-through;text-decoration-thickness:2px}
+.tick .xp{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.6px;
+  border:2px solid var(--ink);padding:2px 5px;flex:none}
+.tick.on .xp{background:var(--yellow)}
+
+/* ---------- buttons ---------- */
+.btn{
+  font-family:'Anton',sans-serif;font-size:15px;letter-spacing:.6px;text-transform:uppercase;
+  background:var(--yellow);color:var(--ink);border:var(--rule) solid var(--ink);
+  padding:10px 15px;cursor:pointer;box-shadow:3px 3px 0 var(--ink);
+  transition:transform .12s ease,box-shadow .12s ease}
+.btn:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
+.btn.cy{background:var(--cyan);color:#fff}
+.btn.mg{background:var(--magenta);color:#fff}
+.btn.gh{background:#F6EEDC}
+.btn.sm{font-size:12px;padding:7px 10px;box-shadow:2px 2px 0 var(--ink)}
+.btn.wide{width:100%;display:block;text-align:center}
+.btn:disabled{opacity:.4;cursor:default}
+.btn-row{display:flex;gap:9px;flex-wrap:wrap}
+
+/* ---------- inputs ---------- */
+input,select,textarea{
+  font:inherit;font-size:16px;background:#F6EEDC;color:var(--ink);
+  border:var(--rule) solid var(--ink);padding:10px 11px;width:100%}
+input:focus,select:focus,textarea:focus,.btn:focus-visible,.tick:focus-visible,.tab:focus-visible,
+[data-act]:focus-visible{outline:3px solid var(--magenta);outline-offset:2px}
+label{display:block;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1.3px;
+  text-transform:uppercase;margin-bottom:5px;color:#4A4438}
+.field{margin-bottom:12px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* ---------- training ---------- */
+.arc{border:var(--rule) solid var(--ink);background:var(--pulp-2);
+  padding:12px 13px;margin-bottom:12px;box-shadow:3px 3px 0 var(--ink)}
+.arc.now{background:var(--yellow)}
+.arc .wk{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1.4px;text-transform:uppercase}
+.arc h4{font-family:'Anton',sans-serif;font-weight:400;font-size:19px;margin:3px 0 6px;text-transform:uppercase}
+.arc p{font-size:13.5px;margin:0}
+.ex{border-left:5px solid var(--cyan);padding:2px 0 2px 12px;margin:0 0 15px}
+.ex b{display:block;font-family:'Anton',sans-serif;font-weight:400;font-size:17px;
+  text-transform:uppercase;letter-spacing:.3px}
+.ex.mg{border-left-color:var(--magenta)}
+.ex.yl{border-left-color:var(--yellow)}
+.ex p{font-size:14px;margin:4px 0 0}
+.note{border:var(--rule) solid var(--ink);background:var(--cyan);color:#fff;
+  padding:12px 13px;margin:16px 0 0;font-size:14px;box-shadow:3px 3px 0 var(--ink)}
+.note b{font-family:'Anton',sans-serif;font-weight:400;font-size:16px;
+  text-transform:uppercase;display:block;margin-bottom:4px;letter-spacing:.4px}
+
+/* ---------- fuel ---------- */
+.daynav{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.daynav .lbl{flex:1;text-align:center;font-family:'Space Mono',monospace;
+  font-size:12px;letter-spacing:1px;border:var(--rule) solid var(--ink);
+  background:var(--pulp-2);padding:8px 4px}
+.chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.chip{font-family:'Space Mono',monospace;font-size:11.5px;background:#F6EEDC;
+  border:2px solid var(--ink);padding:6px 9px;cursor:pointer;color:inherit}
+.chip.on{background:var(--magenta);color:#fff}
+.results{max-height:236px;overflow-y:auto;border:var(--rule) solid var(--ink);
+  background:#F6EEDC;margin-bottom:12px}
+.results button{display:flex;width:100%;gap:8px;align-items:baseline;text-align:left;
+  background:none;border:0;border-bottom:2px solid rgba(20,20,20,.16);
+  padding:10px 11px;font:inherit;cursor:pointer;color:inherit}
+.results button:last-child{border-bottom:0}
+.results button b{font-weight:600;font-size:14.5px;flex:1;min-width:0}
+.results button span{font-family:'Space Mono',monospace;font-size:11px;color:#4A4438;flex:none}
+.entry{display:flex;gap:9px;align-items:baseline;border-bottom:2px solid rgba(20,20,20,.16);
+  padding:9px 0}
+.entry:last-of-type{border-bottom:0}
+.entry b{flex:1;min-width:0;font-weight:600;font-size:14.5px}
+.entry .kc{font-family:'Space Mono',monospace;font-size:12.5px;flex:none}
+.entry .x{flex:none;background:none;border:2px solid var(--ink);width:26px;height:26px;
+  font-family:'Bangers',cursive;font-size:15px;line-height:1;cursor:pointer;color:inherit;
+  align-self:center}
+.fuel-state{font-family:'Anton',sans-serif;font-size:17px;text-transform:uppercase;
+  letter-spacing:.3px;margin:12px 0 0}
+.empty{font-size:14px;color:#4A4438;font-style:italic;padding:6px 0}
+
+/* ---------- studio ---------- */
+.canvas-wrap{border:var(--rule) solid var(--ink);box-shadow:5px 5px 0 var(--ink);
+  background:#fff;line-height:0;margin-bottom:12px}
+canvas{width:100%;height:auto;display:block;touch-action:none;cursor:crosshair}
+.pens{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.pen{width:34px;height:34px;border:var(--rule) solid var(--ink);cursor:pointer;padding:0}
+.pen.on{box-shadow:0 0 0 3px var(--yellow),3px 3px 0 var(--ink)}
+.nib{width:34px;height:34px;border:var(--rule) solid var(--ink);background:#F6EEDC;
+  display:grid;place-items:center;cursor:pointer;padding:0}
+.nib i{display:block;border-radius:50%;background:var(--ink)}
+.nib.on{background:var(--yellow)}
+.gallery{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gallery figure{margin:0;border:var(--rule) solid var(--ink);background:#fff;
+  box-shadow:3px 3px 0 var(--ink);line-height:0}
+.gallery img{width:100%;display:block}
+.gallery figcaption{font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.7px;
+  background:var(--pulp-2);border-top:var(--rule) solid var(--ink);padding:5px 6px;line-height:1.3}
+
+/* ---------- tabs ---------- */
+.tabs{
+  position:fixed;left:0;right:0;bottom:0;z-index:20;display:grid;
+  grid-template-columns:repeat(5,1fr);background:var(--navy);
+  border-top:var(--rule) solid var(--ink);
+  padding-bottom:var(--safe-b);height:calc(var(--tabh) + var(--safe-b));
+}
+.tab{background:none;border:0;border-right:2px solid rgba(0,0,0,.35);color:rgba(232,220,192,.62);
+  font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:1.1px;text-transform:uppercase;
+  cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  padding:0 2px;height:var(--tabh)}
+.tab:last-child{border-right:0}
+.tab .g{width:19px;height:19px;border:2px solid currentColor}
+.tab[data-tab="panels"] .g{border-radius:0;border-width:2px 2px 5px 2px}
+.tab[data-tab="train"] .g{border-radius:50%}
+.tab[data-tab="fuel"] .g{transform:rotate(45deg)}
+.tab[data-tab="studio"] .g{border-radius:50% 0 50% 0}
+.tab.on{color:var(--pulp);background:rgba(255,213,0,.15)}
+.tab.on .g{background:var(--yellow);border-color:var(--yellow)}
+
+/* ---------- misc ---------- */
+.view{display:none}.view.on{display:block}
+.warn{border:var(--rule) solid var(--ink);background:var(--magenta);color:#fff;
+  padding:12px 13px;margin-bottom:18px;font-size:14px;box-shadow:3px 3px 0 var(--ink)}
+.toast{position:fixed;left:50%;bottom:calc(var(--tabh) + var(--safe-b) + 16px);
+  transform:translateX(-50%) translateY(140%);z-index:40;
+  background:var(--ink);color:var(--pulp);border:var(--rule) solid var(--yellow);
+  font-family:'Space Mono',monospace;font-size:12.5px;padding:10px 15px;
+  transition:transform .3s ease;max-width:88vw;text-align:center}
+.toast.up{transform:translateX(-50%) translateY(0)}
+.tiny{font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.5px;color:#4A4438}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (prefers-reduced-motion:reduce){
+  *{transition-duration:.01ms !important;animation-duration:.01ms !important}
+}
+@media (max-width:360px){
+  .logo{font-size:25px}.meters{gap:7px}.meter .n{font-size:20px}
+}
+</style>
+</head>
+<body>
+<header class="masthead">
+  <div class="mast-in">
+    <div class="logo">Origin<br>Story<span>ISSUE ONE ONWARDS</span></div>
+    <div class="issue-stamp"><b id="issNo">#1</b><i id="issArc">ORIGIN</i></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div id="storeWarn" class="warn" style="display:none">
+    <b>This browser isn't letting the app save anything.</b><br>
+    Private or incognito mode blocks storage. Open Origin Story in a normal tab and it'll remember your days.
+  </div>
+
+  <!-- ============ COVER ============ -->
+  <section class="view on" id="v-cover">
+    <div class="today" id="todayPanel">
+      <div class="sky"></div><div class="dots"></div><div class="rays"></div><div class="wash"></div>
+      <img class="art" id="todayArt" alt="Today's drawing">
+      <div class="count" id="todayCount">0/6</div>
+      <div class="burst">NAILED IT!</div>
+    </div>
+    <div class="panel-cap" id="todayCap">A blank panel. Go and fill it in.</div>
+
+    <div class="panel tilt-l">
+      <span class="caption">Where you're up to</span>
+      <div class="meters">
+        <div class="meter"><div class="n" id="mDone">0/6</div><div class="l">Today</div></div>
+        <div class="meter"><div class="n" id="mFuel">0</div><div class="l">Fuel kcal</div></div>
+        <div class="meter"><div class="n" id="mRun">0</div><div class="l">Day run</div></div>
+      </div>
+      <div class="hr"></div>
+      <h3 id="xpHead">Issue #1 &middot; Origin</h3>
+      <p class="dek" id="xpDek">Finish four of the six and the day counts.</p>
+      <div class="bar y"><i id="xpBar"></i></div>
+      <p class="tiny" id="xpLine" style="margin-top:8px">0 XP</p>
+    </div>
+
+    <div class="panel tilt-r">
+      <span class="caption">Read me</span>
+      <h2>How this works</h2>
+      <p>Six small things a day. Tick off four and the day counts towards your run — you don't have to be perfect for it to be working.</p>
+      <p>The panel at the top of this page inks itself in as you go. Finish all six and it bursts. If you'd rather draw your own, the Studio tab lets you, and it'll show up here instead.</p>
+      <div class="note">
+        <b>On the fuel tab</b>
+        It's there so you can see you're eating <em>enough</em>, not so you can eat less. If counting food ever starts to feel stressful, or you catch yourself trying to get the number down, close the tab and tell your mum or dad. That's not you failing at the app — it's the app being the wrong tool that week.
+      </div>
+    </div>
+
+    <div class="panel">
+      <span class="caption">Keeping it safe</span>
+      <h2>Back it up</h2>
+      <p class="dek">Everything lives on this phone only. Nothing is sent anywhere. Clear your browser data and it's gone, so copy a backup somewhere now and then.</p>
+      <div class="btn-row">
+        <button class="btn cy" data-act="backup">Copy backup</button>
+        <button class="btn gh" data-act="restore">Paste backup in</button>
+      </div>
+      <p class="tiny" style="margin-top:12px">Your drawings are stored separately and are not part of the text backup.</p>
+    </div>
+  </section>
+
+  <!-- ============ PANELS ============ -->
+  <section class="view" id="v-panels">
+    <div class="panel tilt-l">
+      <span class="caption">Six a day</span>
+      <h2>Today's panels</h2>
+      <p class="dek" id="panelsDate">&nbsp;</p>
+      <div id="tickList"></div>
+    </div>
+    <div class="panel">
+      <span class="caption">The rule</span>
+      <h2>Four out of six holds the run</h2>
+      <p>Miss a couple and you're still fine. Miss the lot and the run goes back to zero — but so what, you start it again tomorrow. Nobody's ever built anything by having a perfect first month.</p>
+    </div>
+  </section>
+
+  <!-- ============ TRAIN ============ -->
+  <section class="view" id="v-train">
+    <div class="panel tilt-r">
+      <span class="caption">Eight weeks</span>
+      <h2>The arcs</h2>
+      <p class="dek">Three sessions a week, plus the stretches every day. No equipment, no gym, nothing you can't do on your bedroom floor.</p>
+      <div id="arcList"></div>
+    </div>
+
+    <div class="panel">
+      <span class="caption" id="wkCap">Week 1</span>
+      <div class="daynav">
+        <button class="btn sm gh" data-act="week-prev">&larr;</button>
+        <div class="lbl" id="wkLabel">Week 1 &middot; Learning to land</div>
+        <button class="btn sm gh" data-act="week-next">&rarr;</button>
+      </div>
+      <h3>Warm up first — every time</h3>
+      <p class="dek">Two minutes. March on the spot, roll your shoulders back ten times, swing each leg forwards and back ten times, then roll your ankles. You want to feel slightly warm, not tired.</p>
+      <div class="hr"></div>
+      <h3 id="sessHead">The session</h3>
+      <p class="dek" id="sessNote">&nbsp;</p>
+      <div id="sessList"></div>
+      <div class="note">
+        <b>Read this bit</b>
+        Sharp pain means stop — that's different from muscles feeling tired or shaky, which is normal. Sore for a day or two after is normal too. Sore for four days means you did too much, so do less next time, not more.
+      </div>
+    </div>
+
+    <div class="panel tilt-l">
+      <span class="caption">Every day</span>
+      <h2>The six-minute stretch</h2>
+      <p class="dek">Do this any time — after training, before bed, whenever. Hold each one and breathe normally. Never bounce, and never stretch so far it hurts.</p>
+      <div id="stretchList"></div>
+    </div>
+  </section>
+
+  <!-- ============ FUEL ============ -->
+  <section class="view" id="v-fuel">
+    <div class="panel tilt-r">
+      <span class="caption">Fuel</span>
+      <div class="daynav">
+        <button class="btn sm gh" data-act="day-prev">&larr;</button>
+        <div class="lbl" id="fuelDay">Today</div>
+        <button class="btn sm gh" data-act="day-next">&rarr;</button>
+      </div>
+      <div class="meters">
+        <div class="meter"><div class="n" id="fKcal">0</div><div class="l">kcal in</div></div>
+        <div class="meter"><div class="n" id="fPro">0g</div><div class="l">Protein</div></div>
+        <div class="meter"><div class="n" id="fAvg">0</div><div class="l">7-day avg</div></div>
+      </div>
+      <div class="bar" style="margin-top:12px"><i id="fBar"></i></div>
+      <p class="fuel-state" id="fState">Nothing down yet.</p>
+      <p class="tiny" style="margin-top:6px" id="fSub">Around 2,100 is a normal day's fuel for someone your age who moves about.</p>
+    </div>
+
+    <div class="panel">
+      <span class="caption">Add something</span>
+      <div class="field">
+        <label for="foodSearch">What did you eat?</label>
+        <input id="foodSearch" type="search" placeholder="Toast, banana, chicken, pasta&hellip;" autocomplete="off">
+      </div>
+      <div id="foodResults" class="results" style="display:none"></div>
+      <div id="pickedWrap" style="display:none">
+        <p style="font-weight:700;margin-bottom:10px" id="pickedName">&nbsp;</p>
+        <div class="chips" id="unitChips"></div>
+        <div class="chips" id="portionChips"></div>
+        <div class="two">
+          <div class="field" style="margin:0">
+            <label for="amt">How much</label>
+            <input id="amt" type="number" inputmode="decimal" min="0" step="1" value="100">
+          </div>
+          <div class="field" style="margin:0">
+            <label>That's about</label>
+            <div class="lbl" id="pickedKcal" style="padding:12px 4px">0 kcal</div>
+          </div>
+        </div>
+        <div class="btn-row" style="margin-top:12px">
+          <button class="btn mg" data-act="food-add">Add it</button>
+          <button class="btn gh sm" data-act="food-clear-search">Cancel</button>
+        </div>
+      </div>
+      <div id="customWrap" style="display:none">
+        <p class="dek">Not on the list? Add it yourself — it'll be saved for next time.</p>
+        <div class="two">
+          <div class="field"><label for="cName">Name</label><input id="cName" type="text"></div>
+          <div class="field"><label for="cKcal">kcal per 100g</label><input id="cKcal" type="number" inputmode="numeric"></div>
+        </div>
+        <div class="two">
+          <div class="field"><label for="cPro">Protein per 100g</label><input id="cPro" type="number" inputmode="decimal" value="0"></div>
+          <div class="field" style="display:flex;align-items:flex-end">
+            <button class="btn cy wide" data-act="food-save-custom">Save food</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel tilt-l">
+      <span class="caption">The day</span>
+      <h2 id="logHead">Today</h2>
+      <div id="foodLog"></div>
+    </div>
+
+    <div class="panel">
+      <span class="caption">Worth knowing</span>
+      <h2>Three things about this tab</h2>
+      <p><strong>The bar fills up, it never runs out.</strong> There's no number counting down and nothing goes red. Going past the line isn't a problem — that's what the line is for.</p>
+      <p><strong>Rough numbers are fine.</strong> Nobody weighs their toast. Guessing gets you close enough, and close enough is the whole point.</p>
+      <p><strong>Skipping a day is fine too.</strong> This tab is optional. The other four aren't much good if this one is making you miserable.</p>
+    </div>
+  </section>
+
+  <!-- ============ STUDIO ============ -->
+  <section class="view" id="v-studio">
+    <div class="panel tilt-r">
+      <span class="caption">Draw today</span>
+      <h2>Today's panel</h2>
+      <p class="dek">Draw whatever the day looked like. It goes straight onto the cover.</p>
+      <div class="canvas-wrap"><canvas id="pad" width="600" height="390"></canvas></div>
+      <div class="pens" id="penRow"></div>
+      <div class="btn-row">
+        <button class="btn mg" data-act="save-panel">Save to cover</button>
+        <button class="btn gh sm" data-act="undo">Undo</button>
+        <button class="btn gh sm" data-act="clear-canvas">Clear</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <span class="caption">Back issues</span>
+      <h2>The run so far</h2>
+      <p class="dek" id="galDek">Nothing saved yet.</p>
+      <div class="gallery" id="gallery"></div>
+    </div>
+  </section>
+</div>
+
+<nav class="tabs" role="tablist">
+  <button class="tab on" data-act="tab" data-tab="cover" role="tab"><span class="g"></span>Cover</button>
+  <button class="tab" data-act="tab" data-tab="panels" role="tab"><span class="g"></span>Panels</button>
+  <button class="tab" data-act="tab" data-tab="train" role="tab"><span class="g"></span>Train</button>
+  <button class="tab" data-act="tab" data-tab="fuel" role="tab"><span class="g"></span>Fuel</button>
+  <button class="tab" data-act="tab" data-tab="studio" role="tab"><span class="g"></span>Studio</button>
+</nav>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(function(){
+"use strict";
+
+/* ============================================================
+   ORIGIN STORY
+   One store, one render(), one delegated [data-act] listener.
+   Run `node check.js` before pushing — it proves every act in
+   the markup has a case in the switch and vice versa.
+   ============================================================ */
+
+var KEY = "originStory.v1";
+var ART = "originStory.art.v1";
+var FUEL_MARK = 2100;   /* a normal day's fuel for an active 16-year-old.
+                           Deliberately NOT adjustable and NOT a ceiling —
+                           the bar fills towards it and stops at full. */
+var ART_CAP = 40;
+
+/* ---------- habits ---------- */
+var HABITS = [
+  {b:"Move for 20 minutes",      s:"A walk counts. So does dancing round your room."},
+  {b:"Do the stretches",         s:"Six minutes. They're on the Train tab."},
+  {b:"Three proper meals",       s:"Breakfast, lunch and dinner. All three."},
+  {b:"Six glasses of water",     s:"About a litre and a half across the day."},
+  {b:"Draw something",           s:"Anything at all. Five minutes of scribbling counts."},
+  {b:"Screens down before bed",  s:"An hour before you sleep. Book, music, anything else."}
+];
+
+/* ---------- training ---------- */
+var ARCS = [
+  {w:"Weeks 1-2", t:"Learning to land", p:"Slow and controlled. You're teaching your body the shapes, not trying to be tired."},
+  {w:"Weeks 3-4", t:"Getting stronger", p:"Same moves, harder versions, a few more of each. This is where it starts to feel like something."},
+  {w:"Weeks 5-6", t:"Moving faster",    p:"Strength work stays, and a short burst of quick stuff goes on the end."},
+  {w:"Weeks 7-8", t:"Putting it together", p:"Everything you've built, in one session. Compare it to week one and you'll see it."}
+];
+
+var WEEKS = [
+  { note:"Three times this week, with a day off in between each one.", ex:[
+    {n:"Chair squats", d:"Stand just in front of a chair, feet about hip width apart. Lower yourself slowly until your bum touches the seat, then stand back up. Do 8 of those, rest a minute, and do it all three times."},
+    {n:"Wall press-ups", d:"Hands flat on a wall at chest height, feet a step back. Bend your arms until your nose is near the wall, then push away. Do 8, rest, three times in total."},
+    {n:"Hip lifts", d:"Lie on your back, knees bent, feet flat on the floor. Push through your heels and lift your hips up, squeeze, hold for two seconds, lower. Do 10, three times."},
+    {n:"Dead bugs", d:"Lie on your back, arms pointing at the ceiling, knees up over your hips. Lower your right arm behind your head and straighten your left leg out, then bring both back. Swap sides. That's one. Do 6, twice."},
+    {n:"March on the spot", d:"Knees up, arms swinging, one minute. Rest a minute. Do it three times."}
+  ]},
+  { note:"Same as last week. Repeating it is the point — it should feel easier by Friday.", ex:[
+    {n:"Chair squats", d:"Same as last week but 10 each time instead of 8, still three times."},
+    {n:"Wall press-ups", d:"10 each time, three times. If it's easy, walk your feet a bit further back."},
+    {n:"Hip lifts", d:"12 each time, three times. Hold the top for a full three seconds."},
+    {n:"Dead bugs", d:"8 each side, twice."},
+    {n:"March on the spot", d:"One minute on, one minute off, four times."}
+  ]},
+  { note:"The chair comes away and the press-ups come down to the floor.", ex:[
+    {n:"Squats", d:"No chair now. Feet hip width, sit back like there's still one there, go as low as feels controlled, stand up. Do 10, rest a minute, three times."},
+    {n:"Knee press-ups", d:"On the floor, knees down, hands under your shoulders. Lower your chest towards the floor and push back up. Do 6, three times. If 6 is too many, do 4 — that's fine."},
+    {n:"One-leg hip lifts", d:"Same hip lift, but with one foot off the floor and that knee hugged in. 8 on each leg, twice."},
+    {n:"Plank", d:"On your forearms and toes, body in a straight line, bum not in the air. Hold 15 seconds. Rest. Three times."},
+    {n:"Stair step-ups", d:"Bottom stair. Step up with your right foot, bring the left up, step back down. 10 leading with each leg, twice."}
+  ]},
+  { note:"Add a couple to each set. Nothing else changes.", ex:[
+    {n:"Squats", d:"12 each time, three times."},
+    {n:"Knee press-ups", d:"8 each time, three times."},
+    {n:"One-leg hip lifts", d:"10 on each leg, twice."},
+    {n:"Plank", d:"20 seconds, three times."},
+    {n:"Stair step-ups", d:"12 leading with each leg, twice."}
+  ]},
+  { note:"A short burst of quick work goes on the end. That bit is meant to make you puff.", ex:[
+    {n:"Squats", d:"12 each time, three times."},
+    {n:"Knee press-ups", d:"10 each time, three times."},
+    {n:"Backwards lunges", d:"Stand tall, step your right foot back and bend both knees until your back knee is near the floor, then step back up. Hold a wall if you wobble. 8 on each leg, three times."},
+    {n:"Plank", d:"25 seconds, three times."},
+    {n:"Star jumps", d:"30 seconds of jumping, 30 seconds standing still. Do that four times."}
+  ]},
+  { note:"Same session, slightly more of it.", ex:[
+    {n:"Squats", d:"15 each time, three times."},
+    {n:"Knee press-ups", d:"12 each time, three times. Try two on your toes at the start if you fancy it."},
+    {n:"Backwards lunges", d:"10 on each leg, three times."},
+    {n:"Plank", d:"30 seconds, three times."},
+    {n:"Star jumps", d:"30 seconds on, 30 off, five times."}
+  ]},
+  { note:"Strength first, then a three-round circuit at the end.", ex:[
+    {n:"Squats", d:"15 each time, three times."},
+    {n:"Press-ups", d:"On your toes if you can, knees if not. 10 each time, three times."},
+    {n:"Backwards lunges", d:"10 on each leg, three times."},
+    {n:"Plank", d:"35 seconds, three times."},
+    {n:"The circuit", d:"30 seconds of high knees, 30 seconds of mountain climbers, 30 seconds of star jumps, then a full minute standing still getting your breath back. Three rounds."}
+  ]},
+  { note:"Last week. Same as week seven — see how much less it takes out of you than it did in week five.", ex:[
+    {n:"Squats", d:"15 each time, three times. Slow on the way down."},
+    {n:"Press-ups", d:"12 each time, three times."},
+    {n:"Backwards lunges", d:"12 on each leg, three times."},
+    {n:"Plank", d:"40 seconds, three times."},
+    {n:"The circuit", d:"Same three rounds, but cut the rest down to 45 seconds."}
+  ]}
+];
+
+var STRETCH = [
+  {n:"Neck", d:"Sit or stand tall. Tip your right ear towards your right shoulder without lifting the shoulder. 20 seconds, then the other side."},
+  {n:"Chest", d:"Forearm flat against a door frame, elbow at shoulder height. Step through the doorway until you feel it across your chest. 25 seconds each arm."},
+  {n:"Cat and cow", d:"On your hands and knees. Round your back up towards the ceiling, then let it dip and look up. Ten slow ones."},
+  {n:"Hamstrings", d:"Sit with one leg straight and the other tucked in. Lean forward from your hips, not your shoulders, until you feel it behind your thigh. 25 seconds each side."},
+  {n:"Hip flexors", d:"Kneel on your right knee with your left foot flat in front. Tuck your bum under and push your hips forward. 25 seconds, then swap."},
+  {n:"Glutes", d:"Lie on your back, right ankle across your left knee, then pull the left thigh towards your chest. 25 seconds each side."},
+  {n:"Calves", d:"Hands on a wall, one foot back with the leg straight and the heel pressed down. 25 seconds each side."},
+  {n:"Child's pose", d:"Kneel, sit back on your heels and reach your arms forward along the floor. Rest there for 45 seconds and breathe."}
+];
+
+/* ---------- food, per 100g unless an item weight is given ----------
+   [name, kcal/100g, protein/100g, item grams (0 = none), item label]   */
+var FOODS = [
+["Wholemeal bread",247,10.5,40,"slice"],["White bread",265,9,36,"slice"],
+["Bagel",275,10,85,"bagel"],["Pitta bread",275,9,60,"pitta"],
+["Wrap",300,8,60,"wrap"],["Crumpet",180,6,50,"crumpet"],
+["Porridge oats (dry)",379,11,40,"portion"],["Weetabix",362,12,19,"biscuit"],
+["Cornflakes",378,7,30,"bowl"],["Rice Krispies",382,6,30,"bowl"],
+["Granola",450,9,45,"portion"],["Pasta (cooked)",158,5.8,220,"portion"],
+["Rice, white (cooked)",130,2.7,180,"portion"],["Rice, brown (cooked)",123,2.7,180,"portion"],
+["Couscous (cooked)",112,3.8,180,"portion"],["Noodles (cooked)",138,4.5,200,"portion"],
+["Boiled potatoes",80,1.8,180,"portion"],["Jacket potato",93,2.5,200,"potato"],
+["Oven chips",162,2.9,150,"portion"],["Mash with butter",110,2,180,"portion"],
+["Sweet potato (baked)",90,2,150,"portion"],
+["Chicken breast (cooked)",165,31,120,"breast"],["Chicken thigh (cooked)",209,26,80,"thigh"],
+["Turkey breast",135,29,100,"portion"],["Beef mince, lean (cooked)",176,26,100,"portion"],
+["Beef mince, standard (cooked)",250,22,100,"portion"],["Pork chop",231,26,120,"chop"],
+["Bacon (grilled)",300,24,25,"rasher"],["Sausage (cooked)",290,13,57,"sausage"],
+["Ham",105,18,20,"slice"],["Tuna in spring water",109,25,112,"tin"],
+["Salmon fillet",208,20,130,"fillet"],["Cod fillet",82,18,130,"fillet"],
+["Fish fingers",200,12,28,"finger"],["Prawns (cooked)",99,24,80,"portion"],
+["Egg",143,12.6,58,"egg"],["Halloumi",321,22,60,"portion"],
+["Tofu, firm",144,15,100,"portion"],["Baked beans",78,4.7,200,"half tin"],
+["Chickpeas",164,8.9,120,"portion"],["Red lentils (cooked)",116,9,150,"portion"],
+["Kidney beans",127,8.7,120,"portion"],["Hummus",306,7.6,30,"dollop"],
+["Peanut butter",588,25,16,"spoonful"],["Peanuts",567,26,30,"handful"],
+["Cashews",553,18,30,"handful"],["Almonds",579,21,30,"handful"],
+["Milk, semi-skimmed",50,3.6,200,"glass"],["Milk, whole",64,3.4,200,"glass"],
+["Oat milk",45,1,200,"glass"],["Cheddar",416,25,30,"slice"],
+["Mozzarella",280,22,50,"portion"],["Greek yoghurt, 0%",57,10,170,"pot"],
+["Greek yoghurt, 5%",97,9,170,"pot"],["Natural yoghurt",61,3.5,150,"pot"],
+["Fruit yoghurt pot",90,4,125,"pot"],["Butter",744,0.9,8,"scrape"],
+["Cream cheese",250,6,20,"spread"],["Custard",100,3,120,"portion"],
+["Apple",52,0.3,150,"apple"],["Banana",89,1.1,118,"banana"],
+["Orange",47,0.9,140,"orange"],["Satsuma",47,0.8,75,"satsuma"],
+["Grapes",69,0.7,80,"handful"],["Strawberries",32,0.7,100,"bowl"],
+["Blueberries",57,0.7,80,"handful"],["Pear",57,0.4,170,"pear"],
+["Melon",34,0.8,150,"wedge"],["Pineapple",50,0.5,120,"portion"],
+["Mango",60,0.8,120,"portion"],["Raisins",299,3,30,"box"],
+["Broccoli",34,2.8,80,"portion"],["Carrots",41,0.9,80,"portion"],
+["Peas",81,5.4,80,"portion"],["Sweetcorn",86,3.2,80,"portion"],
+["Green beans",31,1.8,80,"portion"],["Spinach",23,2.9,80,"portion"],
+["Tomato",18,0.9,90,"tomato"],["Cucumber",15,0.7,60,"portion"],
+["Peppers",26,1,80,"portion"],["Salad leaves",15,1.4,40,"handful"],
+["Onion",40,1.1,80,"onion"],["Mushrooms",22,3.1,80,"portion"],
+["Avocado",160,2,70,"half"],
+["Olive oil",884,0,14,"tablespoon"],["Mayonnaise",680,1,15,"spoonful"],
+["Ketchup",102,1.2,15,"squirt"],["Gravy",30,0.6,80,"ladle"],
+["Cheese sauce",130,5,100,"portion"],["Pasta sauce (jar)",55,1.5,150,"portion"],
+["Milk chocolate",535,7.6,45,"small bar"],["Dark chocolate",546,7.8,30,"few squares"],
+["Crisps",532,6,25,"bag"],["Digestive biscuit",471,6.7,15,"biscuit"],
+["Cereal bar",400,5,35,"bar"],["Flapjack",470,5,60,"flapjack"],
+["Cake",380,4,70,"slice"],["Doughnut",400,6,70,"doughnut"],
+["Ice cream",207,3.5,100,"scoop or two"],["Croissant",406,8,60,"croissant"],
+["Muffin",380,5,90,"muffin"],["Popcorn",387,12,25,"bowl"],
+["Orange juice",45,0.7,250,"glass"],["Apple juice",46,0.1,250,"glass"],
+["Squash (made up)",10,0,250,"glass"],["Cola",42,0,330,"can"],
+["Diet cola",1,0,330,"can"],["Smoothie",60,0.8,250,"bottle"],
+["Hot chocolate",90,3,250,"mug"],["Tea with milk",12,0.7,250,"mug"],
+["Latte",55,3,350,"medium"],
+["Pizza",266,11,100,"slice"],["Chicken nuggets",296,15,18,"nugget"],
+["Burger in a bun",250,15,180,"burger"],["Chip shop chips",250,3.5,200,"portion"],
+["Sausage roll",320,8,60,"roll"],["Shop sandwich",230,10,180,"pack"],
+["Pasta bake",150,8,300,"portion"],["Chicken curry",120,9,300,"portion"],
+["Chow mein",130,7,300,"portion"],["Sushi",140,5,180,"pack"]
+];
+
+/* ============================================================
+   STATE
+   ============================================================ */
+var S = {
+  data:{v:1,start:today(),days:{},custom:[],xp:0},
+  art:{},
+  tab:"cover",
+  week:1,
+  offset:0,         /* days back from today on the Fuel tab */
+  picked:null,      /* food currently selected */
+  unit:"g",
+  query:"",
+  storeOK:true,
+  /* canvas */
+  strokes:[], cur:null, pen:"#141414", nib:4
+};
+
+var ui = {};
+
+function today(){ return iso(new Date()); }
+function iso(d){
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function shift(n){ var d=new Date(); d.setDate(d.getDate()+n); return iso(d); }
+function pretty(k){
+  var d=new Date(k+"T12:00:00");
+  return d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});
+}
+function esc(s){ return String(s).replace(/[&<>"]/g,function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+
+/* day() creates the record and is only ever called when something is about to
+   change. peek() is the read-only twin — reading history must never write 400
+   empty days into storage. */
+function day(k){
+  if(!S.data.days[k]) S.data.days[k]={ticks:[false,false,false,false,false,false],food:[]};
+  var d=S.data.days[k];
+  if(!d.ticks||d.ticks.length!==6) d.ticks=[false,false,false,false,false,false];
+  if(!d.food) d.food=[];
+  return d;
+}
+var EMPTY={ticks:[false,false,false,false,false,false],food:[]};
+function peek(k){
+  var d=S.data.days[k];
+  if(!d) return EMPTY;
+  if(!d.ticks||d.ticks.length!==6) d.ticks=[false,false,false,false,false,false];
+  if(!d.food) d.food=[];
+  return d;
+}
+
+/* ---------- storage ---------- */
+function load(){
+  try{
+    localStorage.setItem("__t","1"); localStorage.removeItem("__t");
+  }catch(e){ S.storeOK=false; return; }
+  try{
+    var raw=localStorage.getItem(KEY);
+    if(raw){ var p=JSON.parse(raw); if(p&&typeof p==="object"){
+      S.data=Object.assign(S.data,p);
+      if(!S.data.days) S.data.days={};
+      if(!S.data.custom) S.data.custom=[];
+      if(!S.data.start) S.data.start=today();
+    }}
+    var a=localStorage.getItem(ART);
+    if(a) S.art=JSON.parse(a)||{};
+  }catch(e){ /* corrupt payload — start clean rather than crash */ }
+}
+function save(){
+  if(!S.storeOK) return;
+  try{ localStorage.setItem(KEY,JSON.stringify(S.data)); }
+  catch(e){ toast("Couldn't save — the phone's storage is full."); }
+}
+function saveArt(){
+  if(!S.storeOK) return true;
+  try{ localStorage.setItem(ART,JSON.stringify(S.art)); return true; }
+  catch(e){
+    var keys=Object.keys(S.art).sort();
+    if(keys.length>4){ delete S.art[keys[0]]; return saveArt(); }
+    toast("No room left for drawings. Delete a few back issues.");
+    return false;
+  }
+}
+
+/* ---------- scoring ---------- */
+function ticked(k){ return peek(k).ticks.filter(Boolean).length; }
+function runLength(){
+  var n=0,i=0;
+  if(ticked(today())<4) i=1;             /* today still going — start counting at yesterday */
+  for(;i<400;i++){
+    if(ticked(shift(-i))>=4) n++; else break;
+  }
+  return n;
+}
+function totalXP(){
+  var xp=0;
+  Object.keys(S.data.days).forEach(function(k){
+    var t=ticked(k); xp+=t*10; if(t===6) xp+=20;
+  });
+  return xp;
+}
+/* A perfect day is 80 XP. Issue #2 lands after about four good days, and
+   the eight-week programme finishes somewhere around issue #8. */
+function issueOf(xp){
+  var n=1,need=300;
+  while(xp>=need){ xp-=need; n++; need=300+(n-1)*120; }
+  return {n:n,into:xp,need:need};
+}
+function arcName(n){
+  if(n<=3) return "ORIGIN";
+  if(n<=7) return "RISING";
+  if(n<=12) return "BREAKOUT";
+  if(n<=20) return "HEADLINER";
+  return "ICON";
+}
+function weekNow(){
+  var s=new Date(S.data.start+"T12:00:00"), n=new Date(today()+"T12:00:00");
+  var w=Math.floor((n-s)/86400000/7)+1;
+  return Math.max(1,Math.min(8,w));
+}
+function kcalOf(k){
+  return Math.round(peek(k).food.reduce(function(a,f){return a+f.kc;},0));
+}
+function proOf(k){
+  return Math.round(peek(k).food.reduce(function(a,f){return a+(f.pr||0);},0));
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function render(){
+  var t=today(), d=peek(t), n=ticked(t);
+  var xp=totalXP(), iss=issueOf(xp);
+
+  /* masthead */
+  ui.issNo.textContent="#"+iss.n;
+  ui.issArc.textContent=arcName(iss.n);
+
+  /* cover: the panel */
+  var p=ui.todayPanel;
+  p.className="today"+(n>=1?" s1":"")+(n>=2?" s2":"")+(n>=4?" s3":"")+(n===6?" done":"");
+  if(S.art[t]){ p.classList.add("has-art"); ui.todayArt.src=S.art[t]; }
+  else { p.classList.remove("has-art"); ui.todayArt.removeAttribute("src"); }
+  ui.todayCount.textContent=n+"/6";
+  ui.todayCap.textContent =
+    S.art[t] ? "Drawn by you, "+pretty(t)+"." :
+    n===0 ? "A blank panel. Go and fill it in." :
+    n<4   ? "Coming through. "+n+" down, "+(6-n)+" to go." :
+    n<6   ? "That's the day counted. Anything else is a bonus." :
+            "All six. Best kind of day.";
+
+  ui.mDone.textContent=n+"/6";
+  ui.mFuel.textContent=kcalOf(t);
+  ui.mRun.textContent=runLength();
+
+  ui.xpHead.textContent="Issue #"+iss.n+" \u00b7 "+arcName(iss.n).toLowerCase().replace(/^./,function(c){return c.toUpperCase();});
+  ui.xpDek.textContent=(runLength()>0)
+    ? runLength()+" day"+(runLength()===1?"":"s")+" on the run. Four out of six keeps it."
+    : "Finish four of the six and the day counts.";
+  ui.xpBar.style.width=Math.round(iss.into/iss.need*100)+"%";
+  ui.xpLine.textContent=iss.into+" / "+iss.need+" XP towards issue #"+(iss.n+1);
+
+  /* panels tab */
+  ui.panelsDate.textContent=pretty(t);
+  ui.tickList.innerHTML=HABITS.map(function(h,i){
+    return '<button class="tick'+(d.ticks[i]?" on":"")+'" data-act="tick" data-i="'+i+'" aria-pressed="'+
+      (d.ticks[i]?"true":"false")+'"><span class="box" aria-hidden="true">X</span><span class="t"><b>'+
+      esc(h.b)+'</b><span>'+esc(h.s)+'</span></span><span class="xp">10 XP</span></button>';
+  }).join("");
+
+  /* training */
+  var wNow=weekNow(), arcIdx=Math.ceil(S.week/2)-1;
+  ui.arcList.innerHTML=ARCS.map(function(a,i){
+    return '<div class="arc'+(i===arcIdx?" now":"")+'"><div class="wk">'+esc(a.w)+
+      '</div><h4>'+esc(a.t)+'</h4><p>'+esc(a.p)+'</p></div>';
+  }).join("");
+  var wk=WEEKS[S.week-1];
+  ui.wkCap.textContent="Week "+S.week+(S.week===wNow?" \u00b7 you are here":"");
+  ui.wkLabel.textContent="Week "+S.week+" \u00b7 "+ARCS[arcIdx].t;
+  ui.sessNote.textContent=wk.note;
+  ui.sessList.innerHTML=wk.ex.map(function(e,i){
+    var c=["","mg","yl"][i%3];
+    return '<div class="ex '+c+'"><b>'+esc(e.n)+'</b><p>'+esc(e.d)+'</p></div>';
+  }).join("");
+  ui.stretchList.innerHTML=STRETCH.map(function(e,i){
+    var c=["","mg","yl"][i%3];
+    return '<div class="ex '+c+'"><b>'+esc(e.n)+'</b><p>'+esc(e.d)+'</p></div>';
+  }).join("");
+
+  renderFuel();
+  renderGallery();
+
+  /* tabs + views */
+  ui.tabs.forEach(function(b){ b.classList.toggle("on",b.dataset.tab===S.tab); });
+  ui.views.forEach(function(v){ v.classList.toggle("on",v.id==="v-"+S.tab); });
+}
+
+function renderFuel(){
+  var k=shift(-S.offset), d=peek(k), kc=kcalOf(k), pr=proOf(k);
+  ui.fuelDay.textContent=S.offset===0?"Today":(S.offset===1?"Yesterday":pretty(k));
+  ui.logHead.textContent=S.offset===0?"Today":pretty(k);
+  ui.fKcal.textContent=kc;
+  ui.fPro.textContent=pr+"g";
+
+  var sum=0,cnt=0;
+  for(var i=0;i<7;i++){ var kk=shift(-i); if(S.data.days[kk]&&S.data.days[kk].food.length){ sum+=kcalOf(kk); cnt++; } }
+  ui.fAvg.textContent=cnt?Math.round(sum/cnt):0;
+
+  ui.fBar.style.width=Math.min(100,Math.round(kc/FUEL_MARK*100))+"%";
+  ui.fState.textContent =
+    kc===0    ? "Nothing down yet." :
+    kc<900    ? "Only a little so far \u2014 there's plenty of day left." :
+    kc<1500   ? "Getting there. Keep eating." :
+    kc<1800   ? "Nearly a full day's fuel." :
+                "Properly fuelled.";
+  ui.fSub.textContent = kc>=1800
+    ? "That's a good day's eating. The bar stops at full \u2014 going past it isn't a problem."
+    : "Around 2,100 is a normal day's fuel for someone your age who moves about.";
+
+  ui.foodLog.innerHTML = d.food.length
+    ? d.food.map(function(f,i){
+        return '<div class="entry"><b>'+esc(f.n)+'</b><span class="kc">'+Math.round(f.kc)+
+          ' kcal</span><button class="x" data-act="food-del" data-i="'+i+'" aria-label="Remove '+
+          esc(f.n)+'">X</button></div>';
+      }).join("")
+    : '<p class="empty">Nothing written down for this day.</p>';
+}
+
+function renderGallery(){
+  var keys=Object.keys(S.art).sort().reverse();
+  ui.galDek.textContent = keys.length
+    ? keys.length+" panel"+(keys.length===1?"":"s")+" drawn so far."
+    : "Nothing saved yet. Draw one above and it'll appear here.";
+  ui.gallery.innerHTML=keys.map(function(k){
+    return '<figure><img src="'+S.art[k]+'" alt="Panel from '+esc(pretty(k))+
+      '"><figcaption>'+esc(pretty(k))+'<br><button class="chip" data-act="panel-del" data-k="'+
+      k+'" style="margin-top:5px;padding:3px 7px;font-size:10px">Delete</button></figcaption></figure>';
+  }).join("");
+}
+
+/* ---------- food search ---------- */
+function allFoods(){
+  return FOODS.concat(S.data.custom.map(function(c){ return [c.n,c.kc,c.pr,0,""]; }));
+}
+function renderSearch(){
+  var q=S.query.trim().toLowerCase();
+  if(!q){ ui.foodResults.style.display="none"; ui.customWrap.style.display="none"; return; }
+  var hits=allFoods().filter(function(f){ return f[0].toLowerCase().indexOf(q)>-1; }).slice(0,12);
+  if(!hits.length){
+    ui.foodResults.style.display="none";
+    ui.customWrap.style.display="block";
+    ui.cName.value=S.query.trim();
+    return;
+  }
+  ui.customWrap.style.display="none";
+  ui.foodResults.style.display="block";
+  ui.foodResults.innerHTML=hits.map(function(f){
+    var i=allFoods().findIndex(function(x){ return x[0]===f[0]; });
+    return '<button data-act="food-pick" data-id="'+i+'"><b>'+esc(f[0])+
+      '</b><span>'+f[1]+' kcal / 100g</span></button>';
+  }).join("");
+}
+function renderPicked(){
+  var f=S.picked;
+  if(!f){ ui.pickedWrap.style.display="none"; return; }
+  ui.pickedWrap.style.display="block";
+  ui.pickedName.textContent=f[0];
+  var units=[["g","grams"]];
+  if(f[3]>0) units.push(["item","per "+f[4]]);
+  ui.unitChips.innerHTML=units.map(function(u){
+    return '<button class="chip'+(S.unit===u[0]?" on":"")+'" data-act="unit" data-u="'+u[0]+'">'+esc(u[1])+'</button>';
+  }).join("");
+  var ports = S.unit==="item" ? [1,2,3] : [30,50,100,150,200];
+  ui.portionChips.innerHTML=ports.map(function(g){
+    return '<button class="chip" data-act="portion" data-g="'+g+'">'+g+(S.unit==="item"?"":"g")+'</button>';
+  }).join("");
+  calcPicked();
+}
+function calcPicked(){
+  var f=S.picked; if(!f) return;
+  var a=parseFloat(ui.amt.value)||0;
+  var grams = S.unit==="item" ? a*f[3] : a;
+  ui.pickedKcal.textContent=Math.round(grams*f[1]/100)+" kcal";
+}
+
+/* ---------- canvas ---------- */
+var PENS=["#141414","#00A8E1","#E5007D","#FFD500","#1B2A6B","#F6EEDC"];
+var NIBS=[2,5,10];
+function renderPens(){
+  ui.penRow.innerHTML =
+    PENS.map(function(c){
+      return '<button class="pen'+(S.pen===c?" on":"")+'" data-act="pen" data-c="'+c+
+        '" style="background:'+c+'" aria-label="Colour '+c+'"></button>';
+    }).join("") +
+    NIBS.map(function(w){
+      return '<button class="nib'+(S.nib===w?" on":"")+'" data-act="nib" data-w="'+w+
+        '" aria-label="Brush size '+w+'"><i style="width:'+w*2+'px;height:'+w*2+'px"></i></button>';
+    }).join("");
+}
+function padPoint(e){
+  var r=ui.pad.getBoundingClientRect();
+  return { x:(e.clientX-r.left)*(ui.pad.width/r.width),
+           y:(e.clientY-r.top)*(ui.pad.height/r.height) };
+}
+function repaint(){
+  var c=ui.pad.getContext("2d");
+  c.fillStyle="#FFFFFF"; c.fillRect(0,0,ui.pad.width,ui.pad.height);
+  c.lineCap="round"; c.lineJoin="round";
+  S.strokes.forEach(function(s){
+    c.strokeStyle=s.c; c.lineWidth=s.w; c.beginPath();
+    s.p.forEach(function(pt,i){ i?c.lineTo(pt.x,pt.y):c.moveTo(pt.x,pt.y); });
+    if(s.p.length===1){ c.lineTo(s.p[0].x+0.1,s.p[0].y+0.1); }
+    c.stroke();
+  });
+}
+function wirePad(){
+  var el=ui.pad;
+  el.addEventListener("pointerdown",function(e){
+    el.setPointerCapture(e.pointerId);
+    S.cur={c:S.pen,w:S.nib,p:[padPoint(e)]};
+    S.strokes.push(S.cur); repaint();
+  });
+  el.addEventListener("pointermove",function(e){
+    if(!S.cur) return;
+    S.cur.p.push(padPoint(e)); repaint();
+  });
+  el.addEventListener("pointerup",function(){ S.cur=null; });
+  el.addEventListener("pointercancel",function(){ S.cur=null; });
+}
+function savePanel(){
+  var out=document.createElement("canvas");
+  out.width=480; out.height=312;
+  out.getContext("2d").drawImage(ui.pad,0,0,480,312);
+  var url=out.toDataURL("image/jpeg",0.62);
+  var t=today();
+  S.art[t]=url;
+  var keys=Object.keys(S.art).sort();
+  while(keys.length>ART_CAP){ delete S.art[keys.shift()]; }
+  if(saveArt()) toast("Panel saved to the cover.");
+  render();
+}
+
+/* ---------- toast ---------- */
+var toastT=null;
+function toast(m){
+  ui.toast.textContent=m; ui.toast.classList.add("up");
+  clearTimeout(toastT);
+  toastT=setTimeout(function(){ ui.toast.classList.remove("up"); },2600);
+}
+
+/* ============================================================
+   ACTIONS — one delegated listener, one switch
+   ============================================================ */
+function act(name,el){
+  var t=today(), d=day(t), k, f, i;
+  switch(name){
+
+    case "tab":
+      S.tab=el.dataset.tab;
+      window.scrollTo(0,0);
+      render();
+      break;
+
+    case "tick":
+      i=+el.dataset.i;
+      d.ticks[i]=!d.ticks[i];
+      save(); render();
+      break;
+
+    case "day-prev":
+      S.offset=Math.min(30,S.offset+1); renderFuel(); break;
+
+    case "day-next":
+      S.offset=Math.max(0,S.offset-1); renderFuel(); break;
+
+    case "food-pick":
+      S.picked=allFoods()[+el.dataset.id];
+      S.unit=S.picked[3]>0?"item":"g";
+      ui.amt.value=S.picked[3]>0?1:100;
+      ui.foodResults.style.display="none";
+      renderPicked();
+      break;
+
+    case "unit":
+      S.unit=el.dataset.u;
+      ui.amt.value=S.unit==="item"?1:100;
+      renderPicked();
+      break;
+
+    case "portion":
+      ui.amt.value=el.dataset.g;
+      calcPicked();
+      break;
+
+    case "food-add":
+      f=S.picked; if(!f) break;
+      var amt=parseFloat(ui.amt.value)||0;
+      if(amt<=0){ toast("Put a number in first."); break; }
+      var grams=S.unit==="item"?amt*f[3]:amt;
+      k=shift(-S.offset);
+      day(k).food.push({
+        n:f[0]+(S.unit==="item"?" \u00d7"+amt:" "+Math.round(grams)+"g"),
+        kc:grams*f[1]/100,
+        pr:grams*f[2]/100
+      });
+      S.picked=null; S.query=""; ui.foodSearch.value="";
+      ui.pickedWrap.style.display="none";
+      save(); renderFuel(); render();
+      break;
+
+    case "food-del":
+      k=shift(-S.offset);
+      day(k).food.splice(+el.dataset.i,1);
+      save(); renderFuel(); render();
+      break;
+
+    case "food-clear-search":
+      S.picked=null; S.query=""; ui.foodSearch.value="";
+      ui.pickedWrap.style.display="none"; ui.foodResults.style.display="none";
+      ui.customWrap.style.display="none";
+      break;
+
+    case "food-save-custom":
+      var nm=ui.cName.value.trim(), kc=parseFloat(ui.cKcal.value), pr=parseFloat(ui.cPro.value)||0;
+      if(!nm||!(kc>0)){ toast("Needs a name and a calorie number."); break; }
+      S.data.custom.push({n:nm,kc:kc,pr:pr});
+      ui.cName.value=""; ui.cKcal.value=""; ui.cPro.value="0";
+      ui.customWrap.style.display="none";
+      S.query=nm; ui.foodSearch.value=nm;
+      save(); renderSearch();
+      toast("Saved. It'll be there next time.");
+      break;
+
+    case "week-prev":
+      S.week=Math.max(1,S.week-1); render(); break;
+
+    case "week-next":
+      S.week=Math.min(8,S.week+1); render(); break;
+
+    case "pen":
+      S.pen=el.dataset.c; renderPens(); break;
+
+    case "nib":
+      S.nib=+el.dataset.w; renderPens(); break;
+
+    case "undo":
+      S.strokes.pop(); repaint(); break;
+
+    case "clear-canvas":
+      S.strokes=[]; repaint(); break;
+
+    case "save-panel":
+      if(!S.strokes.length){ toast("Draw something first."); break; }
+      savePanel();
+      break;
+
+    case "panel-del":
+      delete S.art[el.dataset.k];
+      saveArt(); render();
+      break;
+
+    case "backup":
+      var txt=JSON.stringify(S.data);
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(txt).then(
+          function(){ toast("Backup copied. Paste it somewhere safe."); },
+          function(){ window.prompt("Copy this and keep it safe:",txt); }
+        );
+      } else { window.prompt("Copy this and keep it safe:",txt); }
+      break;
+
+    case "restore":
+      var inp=window.prompt("Paste a backup in here. This replaces everything currently saved.");
+      if(!inp) break;
+      try{
+        var parsed=JSON.parse(inp);
+        if(!parsed||!parsed.days) throw new Error("shape");
+        S.data=parsed;
+        if(!S.data.custom) S.data.custom=[];
+        if(!S.data.start) S.data.start=today();
+        save(); S.week=weekNow(); render();
+        toast("Restored.");
+      }catch(e){ toast("That doesn't look like a backup."); }
+      break;
+  }
+}
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+function boot(){
+  ["issNo","issArc","todayPanel","todayArt","todayCount","todayCap","mDone","mFuel","mRun",
+   "xpHead","xpDek","xpBar","xpLine","panelsDate","tickList","arcList","wkCap","wkLabel",
+   "sessNote","sessList","stretchList","fuelDay","logHead","fKcal","fPro","fAvg","fBar",
+   "fState","fSub","foodLog","foodSearch","foodResults","pickedWrap","pickedName","unitChips",
+   "portionChips","amt","pickedKcal","customWrap","cName","cKcal","cPro","pad","penRow",
+   "gallery","galDek","toast","storeWarn"].forEach(function(id){ ui[id]=document.getElementById(id); });
+  ui.tabs=[].slice.call(document.querySelectorAll(".tab"));
+  ui.views=[].slice.call(document.querySelectorAll(".view"));
+
+  load();
+  if(!S.storeOK) ui.storeWarn.style.display="block";
+  S.week=weekNow();
+
+  document.addEventListener("click",function(e){
+    var el=e.target.closest("[data-act]");
+    if(!el) return;
+    e.preventDefault();
+    act(el.dataset.act,el);
+  });
+
+  ui.foodSearch.addEventListener("input",function(){
+    S.query=ui.foodSearch.value;
+    S.picked=null; ui.pickedWrap.style.display="none";
+    renderSearch();
+  });
+  ui.amt.addEventListener("input",calcPicked);
+
+  wirePad(); repaint(); renderPens();
+  render();
+
+  if("serviceWorker" in navigator){
+    window.addEventListener("load",function(){
+      navigator.serviceWorker.register("sw.js").catch(function(){});
+    });
+  }
+}
+
+if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",boot);
+else boot();
+
+})();
+</script>
+</body>
+</html>
