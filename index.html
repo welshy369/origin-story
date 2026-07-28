@@ -361,6 +361,9 @@ canvas{width:100%;height:auto;display:block;touch-action:none;cursor:crosshair}
       <p class="dek" id="installDek">It opens full screen with no browser bar, and works with no signal.</p>
       <button class="btn mg wide" id="installBtn" data-act="install">Install Origin Story</button>
       <p class="tiny" id="installNote" style="margin-top:12px">&nbsp;</p>
+      <div class="hr"></div>
+      <button class="btn gh sm wide" data-act="diagnose">Why won't it install?</button>
+      <div id="diagOut" style="display:none;margin-top:12px"></div>
     </div>
 
     <div class="panel">
@@ -1095,6 +1098,85 @@ function renderInstall(){
     : "Offline copy still downloading. Give it a few seconds and pull down to refresh.";
 }
 
+/* ---------- install diagnostics ----------
+   Chrome will not tell you why it declined to offer an install, so this walks
+   its criteria one at a time on the actual device and prints the result.
+   Screenshot it and send it on if anything reads FAIL. */
+var diag=[];
+function diagLine(label,state,detail){
+  diag.push({l:label,s:state,d:detail||""});
+  drawDiag();
+}
+function drawDiag(){
+  ui.diagOut.style.display="block";
+  ui.diagOut.innerHTML=diag.map(function(r){
+    var mark = r.s===true?"PASS":(r.s===false?"FAIL":"\u2014");
+    var col  = r.s===true?"#00A8E1":(r.s===false?"#E5007D":"#4A4438");
+    return '<div style="display:flex;gap:9px;align-items:baseline;border-bottom:2px solid rgba(20,20,20,.16);padding:8px 0">'+
+      '<b style="font-family:\'Space Mono\',monospace;font-size:10px;color:'+col+';flex:none;width:38px">'+mark+'</b>'+
+      '<span style="flex:1;min-width:0"><b style="font-size:13.5px">'+esc(r.l)+'</b>'+
+      (r.d?'<br><span class="tiny" style="word-break:break-all">'+esc(r.d)+'</span>':'')+'</span></div>';
+  }).join("");
+}
+function diagnose(){
+  diag=[]; drawDiag();
+
+  diagLine("Address",null,location.href);
+  diagLine("Browser",null,navigator.userAgent);
+  diagLine("Served over https",
+    location.protocol==="https:"||location.hostname==="localhost",
+    location.protocol);
+  diagLine("Already installed", isStandalone()?true:null,
+    isStandalone()?"running standalone \u2014 nothing left to install":"running in a browser tab");
+  diagLine("Chrome offered an install", !!deferredPrompt,
+    deferredPrompt?"button is live":"no beforeinstallprompt yet \u2014 iOS never fires it, and Chrome will not fire it twice");
+
+  var link=document.querySelector('link[rel="manifest"]');
+  if(!link){ diagLine("Manifest linked",false,"no <link rel=manifest> in the page"); }
+  else{
+    diagLine("Manifest linked",true,link.href);
+    fetch(link.href).then(function(r){
+      if(!r.ok){ diagLine("Manifest loads",false,"HTTP "+r.status+" \u2014 wrong filename or not uploaded"); return null; }
+      return r.text();
+    }).then(function(txt){
+      if(txt===null||txt===undefined) return;
+      var m;
+      try{ m=JSON.parse(txt); }
+      catch(e){ diagLine("Manifest is valid JSON",false,"it downloaded but will not parse"); return; }
+      diagLine("Manifest loads",true,"parsed fine");
+      diagLine("Display is standalone",m.display==="standalone",String(m.display));
+      var icons=m.icons||[];
+      var has192=icons.some(function(i){ return String(i.sizes).indexOf("192")>-1; });
+      var has512=icons.some(function(i){ return String(i.sizes).indexOf("512")>-1; });
+      diagLine("Manifest has 192 and 512 icons",has192&&has512,icons.length+" listed");
+      var dataUri=icons.some(function(i){ return String(i.src).indexOf("data:")===0; });
+      if(dataUri) diagLine("Icons are real files",false,"a data: URI is present \u2014 Chrome refuses these and will not install");
+      else diagLine("Icons are real files",true,icons.map(function(i){return i.src;}).join(", "));
+      /* Kept in its own try so a bad icon URL cannot be reported as the
+         manifest having failed to load — it very much did load. */
+      try{
+        icons.slice(0,2).forEach(function(ic){
+          var u=new URL(ic.src,link.href).href;
+          fetch(u).then(function(r){
+            var ct=(r.headers&&r.headers.get("content-type"))||"";
+            diagLine("Icon reachable: "+ic.src, r.ok&&ct.indexOf("image")===0, "HTTP "+r.status+" \u00b7 "+(ct||"no content-type"));
+          }).catch(function(){ diagLine("Icon reachable: "+ic.src,false,"could not be fetched"); });
+        });
+      }catch(e){ diagLine("Icon paths readable",false,String(e.message||e)); }
+    }).catch(function(e){ diagLine("Manifest check finished",false,String(e&&e.message||e)); });
+  }
+
+  if(!("serviceWorker" in navigator)){
+    diagLine("Service worker supported",false,"this browser has none \u2014 usually a private window or an in-app browser");
+  } else {
+    navigator.serviceWorker.getRegistration().then(function(reg){
+      diagLine("Service worker registered",!!reg,reg?("scope "+reg.scope):"none registered yet");
+      diagLine("Service worker controlling the page",!!navigator.serviceWorker.controller,
+        navigator.serviceWorker.controller?"active":"not yet \u2014 close the tab fully and reopen");
+    }).catch(function(){ diagLine("Service worker registered",false,"lookup failed"); });
+  }
+}
+
 /* ---------- toast ---------- */
 var toastT=null;
 function toast(m){
@@ -1214,6 +1296,10 @@ function act(name,el){
       saveArt(); render();
       break;
 
+    case "diagnose":
+      diagnose();
+      break;
+
     case "install":
       if(!deferredPrompt) break;
       deferredPrompt.prompt();
@@ -1259,7 +1345,7 @@ function boot(){
    "sessNote","sessList","stretchList","fuelDay","logHead","fKcal","fPro","fAvg","fBar",
    "fState","fSub","foodLog","foodSearch","foodResults","pickedWrap","pickedName","unitChips",
    "portionChips","amt","pickedKcal","customWrap","cName","cKcal","cPro","pad","penRow",
-   "gallery","galDek","toast","storeWarn","installPanel","installHead","installDek","installBtn","installNote"].forEach(function(id){ ui[id]=document.getElementById(id); });
+   "gallery","galDek","toast","storeWarn","installPanel","installHead","installDek","installBtn","installNote","diagOut"].forEach(function(id){ ui[id]=document.getElementById(id); });
   ui.tabs=[].slice.call(document.querySelectorAll(".tab"));
   ui.views=[].slice.call(document.querySelectorAll(".view"));
 

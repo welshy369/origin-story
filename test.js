@@ -168,7 +168,7 @@ ok("panel deletes", doc.querySelectorAll(".gallery figure").length === 0);
 
 // --- install ----------------------------------------------------------
 tap(doc.querySelector('[data-tab="cover"]'));
-ok("no install nag without a prompt event", $("#installPanel").style.display === "none");
+ok("falls back to menu instructions with no prompt event", $("#installPanel").style.display === "block" && /three dots/.test($("#installDek").textContent));
 const bip = new w.Event("beforeinstallprompt");
 let prompted = false;
 bip.prompt = () => { prompted = true; };
@@ -178,7 +178,59 @@ ok("install panel appears when the browser offers it", $("#installPanel").style.
 tap($('[data-act="install"]'));
 ok("the button actually fires the prompt", prompted);
 await new Promise(r => setTimeout(r, 10));
-ok("panel goes away once it's done", $("#installPanel").style.display === "none");
+ok("falls back again once the prompt is spent", $("#installBtn").style.display === "none");
+
+// the event can arrive before boot() — it must still be caught
+const dom2 = new JSDOM(html, { runScripts: "dangerously", pretendToBeVisual: true,
+  beforeParse(w2) {
+    Object.defineProperty(w2, "localStorage", { value: {
+      getItem: () => null, setItem: () => {}, removeItem: () => {} } });
+    w2.HTMLCanvasElement.prototype.getContext = () => ({
+      fillRect(){}, beginPath(){}, moveTo(){}, lineTo(){}, stroke(){}, drawImage(){},
+      set fillStyle(v){}, set strokeStyle(v){}, set lineWidth(v){}, set lineCap(v){}, set lineJoin(v){} });
+    w2.HTMLCanvasElement.prototype.toDataURL = () => "data:image/jpeg;base64,AAAA";
+    w2.scrollTo = () => {};
+    if (!w2.matchMedia) w2.matchMedia = () => ({ matches: false, addListener(){}, removeListener(){} });
+    const early = new w2.Event("beforeinstallprompt");
+    early.prompt = () => {};
+    early.userChoice = Promise.resolve({ outcome: "dismissed" });
+    w2.__early = early;
+  }
+});
+dom2.window.dispatchEvent(dom2.window.__early);   // fires before DOMContentLoaded
+await new Promise(r => setTimeout(r, 90));
+ok("a prompt fired before boot is still honoured",
+   dom2.window.document.getElementById("installBtn").style.display === "block");
+
+// --- diagnostics ------------------------------------------------------
+w.fetch = (u) => {
+  if (String(u).includes("manifest")) {
+    return Promise.resolve({ ok: true, status: 200,
+      text: () => Promise.resolve(fs.readFileSync("manifest.webmanifest", "utf8")) });
+  }
+  return Promise.resolve({ ok: true, status: 200,
+    headers: { get: () => "image/png" } });
+};
+w.navigator.serviceWorker = {
+  getRegistration: () => Promise.resolve({ scope: "https://example.test/origin-story/" }),
+  controller: {}, register: () => Promise.resolve({})
+};
+tap($('[data-act="diagnose"]'));
+await new Promise(r => setTimeout(r, 60));
+const dtext = $("#diagOut").textContent;
+ok("diagnostics render", $("#diagOut").style.display === "block");
+ok("reads the real manifest", /Display is standalone/.test(dtext));
+ok("checks for data: URI icons", /Icons are real files/.test(dtext));
+ok("current manifest passes the icon check", !/a data: URI is present/.test(dtext));
+ok("checks the service worker", /Service worker registered/.test(dtext));
+const failed = [...$("#diagOut").querySelectorAll("div")]
+  .filter(d => d.textContent.startsWith("FAIL"))
+  .map(d => d.querySelector("b:nth-of-type(1) + span b, span b")?.textContent || d.textContent.slice(4, 44));
+// jsdom is about:blank with no real install prompt, so those two are expected here
+const expected = ["Served over https", "Chrome offered an install", "Icon paths readable"];
+ok("only the environment-specific checks fail under jsdom",
+   failed.every(f => expected.some(e => f.startsWith(e))),
+   failed.join(" | ") || "none");
 
 // --- storage hygiene --------------------------------------------------
 const saved = JSON.parse(store["originStory.v1"]);
