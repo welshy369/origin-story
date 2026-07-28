@@ -360,6 +360,7 @@ canvas{width:100%;height:auto;display:block;touch-action:none;cursor:crosshair}
       <h2 id="installHead">Add it to the home screen</h2>
       <p class="dek" id="installDek">It opens full screen with no browser bar, and works with no signal.</p>
       <button class="btn mg wide" id="installBtn" data-act="install">Install Origin Story</button>
+      <p class="tiny" id="installNote" style="margin-top:12px">&nbsp;</p>
     </div>
 
     <div class="panel">
@@ -543,6 +544,15 @@ canvas{width:100%;height:auto;display:block;touch-action:none;cursor:crosshair}
    Run `node check.js` before pushing — it proves every act in
    the markup has a case in the switch and vice versa.
    ============================================================ */
+
+/* Chrome fires beforeinstallprompt once and never replays it, so this has to be
+   listening from the moment the script parses — not from inside boot(). */
+var deferredPrompt = null, swReady = false;
+window.addEventListener("beforeinstallprompt", function (e) {
+  e.preventDefault();
+  deferredPrompt = e;
+  if (ui && ui.installPanel) renderInstall();
+});
 
 var KEY = "originStory.v1";
 var ART = "originStory.art.v1";
@@ -1051,7 +1061,6 @@ function savePanel(){
    Android/Chrome fires beforeinstallprompt and we can show a real button.
    iOS never fires it, so we show the Share-sheet steps instead. Once the app
    is running standalone there is nothing left to offer, so the panel hides. */
-var deferredPrompt=null;
 function isStandalone(){
   var mm = window.matchMedia && window.matchMedia("(display-mode: standalone)");
   return (mm && mm.matches) || window.navigator.standalone===true;
@@ -1074,8 +1083,16 @@ function renderInstall(){
     ui.installDek.textContent="Tap the Share button at the bottom of Safari, scroll down, and choose Add to Home Screen. It'll open full screen with no browser bar.";
     ui.installBtn.style.display="none";
   } else {
-    ui.installPanel.style.display="none";
+    /* Chrome hasn't offered a prompt yet. Rather than showing nothing, point at
+       the browser menu, which works whether or not the event ever arrives. */
+    ui.installPanel.style.display="block";
+    ui.installHead.textContent="Add it to the home screen";
+    ui.installDek.textContent="Open the browser menu (the three dots, top right) and choose Install app, or Add to Home screen. It'll open full screen with no browser bar.";
+    ui.installBtn.style.display="none";
   }
+  ui.installNote.textContent = swReady
+    ? "Offline copy ready \u2014 it'll open with no signal."
+    : "Offline copy still downloading. Give it a few seconds and pull down to refresh.";
 }
 
 /* ---------- toast ---------- */
@@ -1242,7 +1259,7 @@ function boot(){
    "sessNote","sessList","stretchList","fuelDay","logHead","fKcal","fPro","fAvg","fBar",
    "fState","fSub","foodLog","foodSearch","foodResults","pickedWrap","pickedName","unitChips",
    "portionChips","amt","pickedKcal","customWrap","cName","cKcal","cPro","pad","penRow",
-   "gallery","galDek","toast","storeWarn","installPanel","installHead","installDek","installBtn"].forEach(function(id){ ui[id]=document.getElementById(id); });
+   "gallery","galDek","toast","storeWarn","installPanel","installHead","installDek","installBtn","installNote"].forEach(function(id){ ui[id]=document.getElementById(id); });
   ui.tabs=[].slice.call(document.querySelectorAll(".tab"));
   ui.views=[].slice.call(document.querySelectorAll(".view"));
 
@@ -1264,9 +1281,6 @@ function boot(){
   });
   ui.amt.addEventListener("input",calcPicked);
 
-  window.addEventListener("beforeinstallprompt",function(e){
-    e.preventDefault(); deferredPrompt=e; renderInstall();
-  });
   window.addEventListener("appinstalled",function(){
     deferredPrompt=null; renderInstall(); toast("Installed.");
   });
@@ -1277,7 +1291,11 @@ function boot(){
 
   if("serviceWorker" in navigator){
     window.addEventListener("load",function(){
-      navigator.serviceWorker.register("sw.js").catch(function(){});
+      navigator.serviceWorker.register("sw.js").then(function(){
+        swReady=true; renderInstall();
+      }).catch(function(){
+        swReady=false; renderInstall();
+      });
     });
   }
 }
